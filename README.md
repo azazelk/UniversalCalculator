@@ -1,0 +1,1 @@
+This is my pet project. This calculator must first of all perform operations on matrices with the ability to save the matrices themselves and the results of operations on them. I'm a beginner C++ developer, so I'm looking for advice on writing similar applications.
