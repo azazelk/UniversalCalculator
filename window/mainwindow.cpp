@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     mainCentralWgt = new CentralWidget;
     setCentralWidget(mainCentralWgt);
 
-
     //####################################### Статус бар #######################################
     status_bar = new QStatusBar;
     start_button = new QPushButton;
@@ -52,28 +51,35 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     connect(save_as, SIGNAL(triggered(bool)), mainCentralWgt, SLOT(matrix_save_as_reciver()));
     //Подключение сигнала (новый файл) к слоту mainCentralWgt для создания нового файла
     connect(file_new, SIGNAL(triggered(bool)), mainCentralWgt, SLOT(new_matrix_file_edit()));
-    //Подключение сигнала выбора математической операции
-    connect(calculate_select, SIGNAL(activated(int)), mainCentralWgt, SLOT(calculation_resiver(int)));
+    //Подключние сигнала для выбора операции
+    connect(calculate_select, SIGNAL(currentIndexChanged(int)), mainCentralWgt, SLOT(operation_num_get(int)));
     //Подключение сигнала кнопки старт
     connect(start_button, SIGNAL(clicked(bool)), mainCentralWgt, SLOT(start()));
     //Подключение сигнала для передачи информации о входных данных
     connect(input_select, SIGNAL(currentIndexChanged(int)), calculate_select, SLOT(create_action(int)));
+    //Подключени сигнала о типе операции
+    connect(calculate_select, SIGNAL(drop_opnum(int)), mainCentralWgt, SLOT(get_op_num(int)));
 }
 
 //QCombobox со слотом для выбора действий с входными данными
-FlexibleBox::FlexibleBox(QWidget *parrent): QComboBox(parrent){};
+FlexibleBox::FlexibleBox(QWidget *parrent): QComboBox(parrent){}
 
 void FlexibleBox::create_action(int i){
+    int num;
     switch (i) {
     case 0:
         this->clear();
-        this->insertItem(0, "Вычислить детерминант");
+        this->addItems(QList<QString>("Вычислить детеримнант"));
+        num = 0;
         break;
     case 1:
         this->clear();
-        this->insertItem(1, "Найти корни");
+        this->addItems(QList<QString>("Найти корни"));
+        num = 1;
         break;
     default:
+        num = 0;
         break;
     }
+    emit drop_opnum(num);
 }

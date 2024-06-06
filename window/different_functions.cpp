@@ -14,6 +14,7 @@ QString* matrix_name_getter(QString& path){
     return name;
 }
 
+//функция для отладки буффера матрицы
 void matrixDebug(qreal* matrix, int& rows, int& cols){
     int k = 0;
     for (int i = 0; i < rows*cols; i++){
@@ -24,9 +25,8 @@ void matrixDebug(qreal* matrix, int& rows, int& cols){
             k = 0;
         }
     }
-    qDebug() << '\n';
 }
-
+//функция для отладки матрицы
 void matrixDebug(qreal** matrix, int& rows, int& cols){
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
@@ -34,5 +34,4 @@ void matrixDebug(qreal** matrix, int& rows, int& cols){
         }
         qDebug() << '\n';
     }
-    qDebug() << '\n';
 }

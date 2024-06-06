@@ -117,5 +117,24 @@ void CentralWidget::calculation_resiver(int i){
 }
 
 void CentralWidget::start(){
-    calc->getData(tab_list->at(tab_counter)->document());
+    if (opnum2 == 0 && !this->tab_list->empty()){
+        if (opnum1 == 0){
+            calc->getMatrixData(this->tab_list->at(tab_counter)->document());
+            qDebug() << "Matrix data get succes";
+        }
+    }
+    else if (opnum2 == 1 && !this->tab_list->empty()){
+        if (opnum1 == 0){
+            qDebug() << "this op empty";
+        }
+    }
+}
+
+void CentralWidget::operation_num_get(int i){
+    opnum1 = i;
+    qDebug() << "operation: " << opnum1;
+}
+
+void CentralWidget::get_op_num(int i){
+    opnum2 = i;
 }

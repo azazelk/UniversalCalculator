@@ -57,6 +57,8 @@ private:
     QVBoxLayout* vlayout;
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
     Calculations* calc;
+    int opnum1 = 0; //хранит в себе первый номер операции
+    int opnum2 = 0; //хранит в себе второй номер операции
 public slots:
     void matrix_from_file_to_dlg(); //слот для открытия файла
     void matrix_save_reciver(); //слот вызывает функцию matrix_save() у конкретного объекта класса MatrixEditor
@@ -66,12 +68,17 @@ public slots:
     void tab_close(int); //слот получает сигнал о закрытии вкладки с файлом
     void calculation_resiver(int); //передаёт индекс математической операции объекту calc из calculate_select
     void start(); //запускает процесс парсинга и вычислений
+    void operation_num_get(int); //слот для получения номера операции
+    void get_op_num(int);
 };
 
 class FlexibleBox: public QComboBox{
+    friend class CentralWidget;
     Q_OBJECT;
 public:
     FlexibleBox(QWidget* parrent = 0);
 public slots:
     void create_action(int);
+signals:
+    void drop_opnum(int);
 };
