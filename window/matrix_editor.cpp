@@ -4,7 +4,6 @@
 MatrixEditor::MatrixEditor(QWidget* parrent): QPlainTextEdit(parrent){
     file_name = new QString;
     path = new QString;
-    answer = new QLabel;
 }
 
 //Деструктор виджета для редоктирования матрицы

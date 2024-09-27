@@ -12,6 +12,7 @@ CentralWidget::CentralWidget(QWidget* parrent): QWidget(parrent){
     this->setLayout(vlayout);
     calc = new Calculations;
     answer_doc = new QDockWidget;
+    answer = new QLabel;
 }
 
 //Деструктор центрального виджета
@@ -100,7 +101,6 @@ void CentralWidget::matrix_save_as_reciver(){
 //Слот для получения номера вкладки из объекта tab класса QTabWidget
 void CentralWidget::tab_num_get(int num){
     tab_counter = num;
-    answer_doc->setWidget(tab_list->at(tab_counter)->answer);
 }
 
 //Слот для получения номера вкладки из объекта tab класса QTabWidget и её закрытия
@@ -126,10 +126,12 @@ void CentralWidget::start(){
             QString det("Determinant: ");
             if (std::pair<int, double> i = calc->GetDet(this->calc->matrix); i.first == 1){
                 det += std::to_string(i.second);
-                tab_list->at(tab_counter)->answer->setText(det);
+                answer->setText(det);
+                answer_doc->setWidget(answer);
             } else {
                 det = "Error, please set matrix, where rows = cols";
-                tab_list->at(tab_counter)->answer->setText(det);
+                answer->setText(det);
+                answer_doc->setWidget(answer);
             }
         }
     }

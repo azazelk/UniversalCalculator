@@ -42,7 +42,6 @@ private:
     QString* file_name; //Хранит имя файла
     QString* path; //Хранит полный путь к файлу
     QFile* matrix_file; //Хранит файл
-    QLabel* answer;
 };
 
 class CentralWidget: public QWidget{
@@ -59,6 +58,7 @@ private:
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
     Calculations* calc;
     QDockWidget* answer_doc;
+    QLabel* answer;
     int opnum1 = 0; //хранит в себе первый номер операции
     int opnum2 = 0; //хранит в себе второй номер операции
 public slots:
