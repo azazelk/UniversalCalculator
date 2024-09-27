@@ -34,6 +34,11 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     status_bar->insertWidget(2, start_button, 0);
     this->setStatusBar(status_bar);
 
+    //####################################### Консоль с ответом ##################################
+    mainCentralWgt->answer_doc = new QDockWidget("Answer console");
+    mainCentralWgt->answer_doc->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::BottomDockWidgetArea, mainCentralWgt->answer_doc);
+
     //####################################### Подключения #######################################
     //Подключение сигнала объекта tab QTabWidget к слоту mainCentralWgt для закрытия вкладки с файлом
     connect(mainCentralWgt->tab, SIGNAL(tabCloseRequested(int)), mainCentralWgt, SLOT(tab_close(int)));

@@ -8,8 +8,8 @@ class MainWindow; //Класс главного окна
 class CentralWidget; //Класс центрального окна
 class MatrixEditor; //Класс редактора матриц
 class Calculations;
+class Matrix;
 class FlexibleBox;
-
 QString* matrix_name_getter(QString&); //Функция принимает путь к файлу и обрезает дирректории так, что остаётстя только имя файла без расширения
 
 class MainWindow: public QMainWindow{
@@ -42,6 +42,7 @@ private:
     QString* file_name; //Хранит имя файла
     QString* path; //Хранит полный путь к файлу
     QFile* matrix_file; //Хранит файл
+    QLabel* answer;
 };
 
 class CentralWidget: public QWidget{
@@ -57,6 +58,7 @@ private:
     QVBoxLayout* vlayout;
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
     Calculations* calc;
+    QDockWidget* answer_doc;
     int opnum1 = 0; //хранит в себе первый номер операции
     int opnum2 = 0; //хранит в себе второй номер операции
 public slots:

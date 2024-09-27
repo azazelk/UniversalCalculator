@@ -27,10 +27,10 @@ void matrixDebug(qreal* matrix, int& rows, int& cols){
     }
 }
 //функция для отладки матрицы
-void matrixDebug(qreal** matrix, int& rows, int& cols){
+void matrixDebug(Eigen::MatrixXd* mat, int& rows, int& cols){
     for (int i = 0; i < rows; i++){
         for (int j = 0; j < cols; j++){
-            qDebug() << matrix[i][j];
+            qDebug() << (*mat)(i,j);
         }
         qDebug() << '\n';
     }

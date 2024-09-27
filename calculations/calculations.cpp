@@ -3,53 +3,88 @@
 
 Calculations::Calculations(){
     combo_index = new int{0};
-    det = new qreal{0};
 }
 
 Calculations::~Calculations(){
     delete combo_index;
-    delete matrix;
 }
 
 void Calculations::getComboIndex(int i){
     *combo_index = i;
 }
 
-//функция парсинга если пользователь совершает действие с матрицей
-void Calculations::getMatrixData(QTextDocument* doc){
-    txt = new QString(doc->toRawText());
-    qDebug() << *txt;
-    //Парсим строку с матрицей в массив
-    QString buffer;
+void Calculations::del_spaces(QString::iterator begin, QString::iterator end, QString* txt){
+    while (begin != end){
+        if (*txt->begin() == ' '){
+            txt->erase(txt->begin());
+        } else if (*begin == ' ' && *(begin + 1) == ' '){
+            txt->erase(begin);
+            begin--;
+        } else if (*begin == ' ' && *(begin + 1) == '\n'){
+            txt->erase(begin);
+            begin--;
+        }
+        if (*(end-1) == ' '){
+            txt->erase(end-1);
+            end--;
+        }
+        begin++;
+    }
+}
+
+Eigen::MatrixXd Calculations::matrix_pars(QTextDocument* doc){
+    QString* buffer = new QString(doc->toPlainText());
     //Узнаём колличество строк
-    int rows = 0;
-    for (auto j = txt->begin(); j != txt->end(); j++){
-        if (*j == QChar(8233)){
-            rows += 1;
+    del_spaces(buffer->begin(), buffer->end(), buffer);
+    auto ti = buffer->begin();
+    int* rows = new int(0);
+    int* elements = new int(0);
+    while(ti != buffer->end()){
+        if (*ti == '\n'){
+            (*rows)++;
+            (*elements)++;
+        } if (*ti == ' '){
+            (*elements)++;
+        }
+        ti++;
+    }
+    (*rows)++;
+    (*elements)++;
+    //Собираем элементы в матрицу
+    int* cols = new int(*elements/(*rows));
+    this->matrix = new Eigen::MatrixXd(*rows, *cols);
+    QString* bufstr = new QString("");
+    int* col_counter = new int(0);
+    int* row_counter = new int(0);
+    for (auto it = buffer->begin(); it != buffer->end(); it++){
+        if (it->isDigit() || *it == ',' || *it == '.'){
+            *bufstr += *it;
+        } else if (*it == ' '){
+            (*matrix)(*row_counter,*col_counter) = bufstr->toDouble();
+            *bufstr = "";
+            (*col_counter)++;
+        } else if (*it == '\n'){
+            (*matrix)(*row_counter,*col_counter) = bufstr->toDouble();
+            *bufstr = "";
+            *col_counter = 0;
+            (*row_counter)++;
         }
     }
-    rows++;
-    //узнаём колличество элементов
-    int elements = 0;
-    for (auto j = txt->begin(); j != txt->end(); j++){
-        if (j->isDigit()){
-            elements++;
-        }
+    (*matrix)(*row_counter,*col_counter) = bufstr->toDouble();
+    delete bufstr;
+    delete col_counter;
+    delete elements;
+    this->cols = new int(*cols);
+    this->rows = new int(*rows);
+    return *matrix;
+}
+
+//функция парсинга если пользователь совершает действие с матрицей
+
+std::pair<int, double> Calculations::GetDet(Eigen::MatrixXd* matrix){
+    if ((*cols)==(*rows)){
+        return {1, matrix->determinant()};
+    } else {
+        return {0, 0};
     }
-    int cols = elements / rows; //узнаём колличество столбцов
-    matrix_data_buffer = new qreal[rows*cols]; //создаём массив подходящего размера
-    //парсим строку в массив
-    int i = 0;
-    for (auto j = txt->begin(); j != txt->end(); j++){
-        if (j->isDigit()){
-            buffer += *j;
-        } else if (*j == QChar(8233) || *j == ' '){
-            if (!buffer.isEmpty()){matrix_data_buffer[i] = buffer.toDouble(); i++;}
-            buffer.clear();
-        }
-    }
-    matrix_data_buffer[i] = buffer.toDouble();
-    buffer.clear();
-    //передаём массив объекту класса matrix
-    matrix = new Matrix(matrix_data_buffer, rows, cols);
 }

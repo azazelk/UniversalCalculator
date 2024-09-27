@@ -11,6 +11,7 @@ CentralWidget::CentralWidget(QWidget* parrent): QWidget(parrent){
     opened_files_paths = new QList<QString>;
     this->setLayout(vlayout);
     calc = new Calculations;
+    answer_doc = new QDockWidget;
 }
 
 //Деструктор центрального виджета
@@ -99,6 +100,7 @@ void CentralWidget::matrix_save_as_reciver(){
 //Слот для получения номера вкладки из объекта tab класса QTabWidget
 void CentralWidget::tab_num_get(int num){
     tab_counter = num;
+    answer_doc->setWidget(tab_list->at(tab_counter)->answer);
 }
 
 //Слот для получения номера вкладки из объекта tab класса QTabWidget и её закрытия
@@ -119,8 +121,16 @@ void CentralWidget::calculation_resiver(int i){
 void CentralWidget::start(){
     if (opnum2 == 0 && !this->tab_list->empty()){
         if (opnum1 == 0){
-            calc->getMatrixData(this->tab_list->at(tab_counter)->document());
+            calc->matrix_pars(this->tab_list->at(tab_counter)->document());
             qDebug() << "Matrix data get succes";
+            QString det("Determinant: ");
+            if (std::pair<int, double> i = calc->GetDet(this->calc->matrix); i.first == 1){
+                det += std::to_string(i.second);
+                tab_list->at(tab_counter)->answer->setText(det);
+            } else {
+                det = "Error, please set matrix, where rows = cols";
+                tab_list->at(tab_counter)->answer->setText(det);
+            }
         }
     }
     else if (opnum2 == 1 && !this->tab_list->empty()){

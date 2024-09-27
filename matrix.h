@@ -7,7 +7,6 @@ public:
     Matrix(double*, int, int);
     Matrix();
     ~Matrix();
-    int get_det();
 private:
     double** data;
     int rows;
