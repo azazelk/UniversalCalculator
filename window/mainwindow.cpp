@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     start_button->setIconSize(QSize(25, 25));
     calculate_select = new FlexibleBox;
     calculate_select->insertItem(0, "Вычислить детерминант");
+    calculate_select->insertItem(1, "Сложить");
     input_select = new QComboBox;
     input_select->insertItem(0, "Матрица");
     input_select->insertItem(1, "Уравнение");
@@ -56,35 +57,33 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     connect(save_as, SIGNAL(triggered(bool)), mainCentralWgt, SLOT(matrix_save_as_reciver()));
     //Подключение сигнала (новый файл) к слоту mainCentralWgt для создания нового файла
     connect(file_new, SIGNAL(triggered(bool)), mainCentralWgt, SLOT(new_matrix_file_edit()));
-    //Подключние сигнала для выбора операции
-    connect(calculate_select, SIGNAL(currentIndexChanged(int)), mainCentralWgt, SLOT(operation_num_get(int)));
     //Подключение сигнала кнопки старт
     connect(start_button, SIGNAL(clicked(bool)), mainCentralWgt, SLOT(start()));
-    //Подключение сигнала для передачи информации о входных данных
-    connect(input_select, SIGNAL(currentIndexChanged(int)), calculate_select, SLOT(create_action(int)));
-    //Подключени сигнала о типе операции
-    connect(calculate_select, SIGNAL(drop_opnum(int)), mainCentralWgt, SLOT(get_op_num(int)));
+    //Подключени сигнала для добавления действий в объект calculate_select
+    connect(input_select, SIGNAL(activated(int)), calculate_select, SLOT(create_action(int)));
+    //Подключени сигнала для передачи номера действия объекту mainCentralWgt
+    connect(calculate_select, SIGNAL(activated(int)), mainCentralWgt, SLOT(get_op_num(int)));
+    //Поключение сигнала для передачи номера вводимых данных объекту mainCentralWgt
+    connect(calculate_select, SIGNAL(drop_input(int)), mainCentralWgt, SLOT(input_num_get(int)));
 }
 
 //QCombobox со слотом для выбора действий с входными данными
 FlexibleBox::FlexibleBox(QWidget *parrent): QComboBox(parrent){}
 
 void FlexibleBox::create_action(int i){
-    int num;
     switch (i) {
     case 0:
         this->clear();
         this->addItems(QList<QString>("Вычислить детеримнант"));
-        num = 0;
+        this->addItems(QList<QString>("Сложить"));
+        emit drop_input(i);
         break;
     case 1:
         this->clear();
         this->addItems(QList<QString>("Найти корни"));
-        num = 1;
+        emit drop_input(i);
         break;
     default:
-        num = 0;
         break;
     }
-    emit drop_opnum(num);
 }

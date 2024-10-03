@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     calculations/calculations.cpp \
-    calculations/matrix.cpp \
     main.cpp \
     window/central_widget.cpp \
     window/different_functions.cpp \
@@ -19,7 +18,6 @@ SOURCES += \
 
 HEADERS += \
     calculations.h \
-    matrix.h \
     window.h
 
 FORMS += \

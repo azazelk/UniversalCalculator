@@ -119,12 +119,14 @@ void CentralWidget::calculation_resiver(int i){
 }
 
 void CentralWidget::start(){
-    if (opnum2 == 0 && !this->tab_list->empty()){
-        if (opnum1 == 0){
-            calc->matrix_pars(this->tab_list->at(tab_counter)->document());
-            qDebug() << "Matrix data get succes";
+    if (opnum1 == 0 && !this->tab_list->empty()){
+        calc->matrix_pars(this->tab_list->at(tab_counter)->document());
+        if (opnum2 == 0){
             QString det("Determinant: ");
             if (std::pair<int, double> i = calc->GetDet(this->calc->matrix); i.first == 1){
+                if (i.second < 1*exp(-10)){
+                    i.second = abs(i.second);
+                }
                 det += std::to_string(i.second);
                 answer->setText(det);
                 answer_doc->setWidget(answer);
@@ -133,20 +135,23 @@ void CentralWidget::start(){
                 answer->setText(det);
                 answer_doc->setWidget(answer);
             }
+        } else if (opnum2 == 1){
+            vlayout->addWidget(new MatrixEditor);
         }
     }
-    else if (opnum2 == 1 && !this->tab_list->empty()){
-        if (opnum1 == 0){
+    else if (opnum1 == 1 && !this->tab_list->empty()){
+        if (opnum2 == 0){
             qDebug() << "this op empty";
         }
     }
 }
 
-void CentralWidget::operation_num_get(int i){
+void CentralWidget::input_num_get(int i){
     opnum1 = i;
-    qDebug() << "operation: " << opnum1;
+    qDebug() << "operation1: " << opnum1;
 }
 
 void CentralWidget::get_op_num(int i){
     opnum2 = i;
+    qDebug() << "operation1: " << opnum2;
 }

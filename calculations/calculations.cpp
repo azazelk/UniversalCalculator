@@ -1,5 +1,4 @@
 #include "calculations.h"
-#include "matrix.h"
 
 Calculations::Calculations(){
     combo_index = new int{0};

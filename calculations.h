@@ -1,6 +1,5 @@
 #pragma once
 #include <window.h>
-#include "matrix.h"
 #include <Eigen/Dense>
 
 class Calculations{

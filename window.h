@@ -8,7 +8,6 @@ class MainWindow; //Класс главного окна
 class CentralWidget; //Класс центрального окна
 class MatrixEditor; //Класс редактора матриц
 class Calculations;
-class Matrix;
 class FlexibleBox;
 QString* matrix_name_getter(QString&); //Функция принимает путь к файлу и обрезает дирректории так, что остаётстя только имя файла без расширения
 
@@ -53,6 +52,7 @@ public:
 private:
     int tab_counter; //хранит число вкладок
     QList<MatrixEditor*>* tab_list; //хранит в себе объекты класса MatrixEditor
+    QList<MatrixEditor*>* second_editor;
     QTabWidget* tab;
     QVBoxLayout* vlayout;
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
@@ -70,8 +70,8 @@ public slots:
     void tab_close(int); //слот получает сигнал о закрытии вкладки с файлом
     void calculation_resiver(int); //передаёт индекс математической операции объекту calc из calculate_select
     void start(); //запускает процесс парсинга и вычислений
-    void operation_num_get(int); //слот для получения номера операции
-    void get_op_num(int);
+    void input_num_get(int); //слот для получения номера вводимых данных
+    void get_op_num(int); //слот для получения номера операции
 };
 
 class FlexibleBox: public QComboBox{
@@ -82,5 +82,5 @@ public:
 public slots:
     void create_action(int);
 signals:
-    void drop_opnum(int);
+    void drop_input(int);
 };
