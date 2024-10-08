@@ -1,4 +1,5 @@
 #pragma once
+#include <Eigen/Dense>
 #include <QMainWindow>
 #include <QApplication>
 #include "QtWidgets"
@@ -52,15 +53,19 @@ public:
 private:
     int tab_counter; //хранит число вкладок
     QList<MatrixEditor*>* tab_list; //хранит в себе объекты класса MatrixEditor
-    QList<MatrixEditor*>* second_editor;
+    MatrixEditor* second_editor;
     QTabWidget* tab;
-    QVBoxLayout* vlayout;
+    QHBoxLayout* hlayout;
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
     Calculations* calc;
     QDockWidget* answer_doc;
     QLabel* answer;
     int opnum1 = 0; //хранит в себе первый номер операции
     int opnum2 = 0; //хранит в себе второй номер операции
+    inline void open_second_editor();
+    Eigen::MatrixXd* matrix1;
+    Eigen::MatrixXd* matrix2;
+    Eigen::MatrixXd* result;
 public slots:
     void matrix_from_file_to_dlg(); //слот для открытия файла
     void matrix_save_reciver(); //слот вызывает функцию matrix_save() у конкретного объекта класса MatrixEditor

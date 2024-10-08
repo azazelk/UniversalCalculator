@@ -5,19 +5,34 @@ CentralWidget::CentralWidget(QWidget* parrent): QWidget(parrent){
     tab_counter = 0;
     tab = new QTabWidget(this);
     tab->setTabsClosable(true);
-    vlayout = new QVBoxLayout(this);
-    vlayout->addWidget(tab);
+    hlayout = new QHBoxLayout(this);
+    second_editor = new MatrixEditor;
+    second_editor->setVisible(false);
+    hlayout->addWidget(tab);
+    hlayout->addWidget(second_editor);
     tab_list = new QList<MatrixEditor*>;
     opened_files_paths = new QList<QString>;
-    this->setLayout(vlayout);
+    this->setLayout(hlayout);
     calc = new Calculations;
     answer_doc = new QDockWidget;
     answer = new QLabel;
+    matrix1 = new Eigen::MatrixXd;
+    matrix2 = new Eigen::MatrixXd;
+    result = new Eigen::MatrixXd;
 }
 
 //Деструктор центрального виджета
 CentralWidget::~CentralWidget(){
     delete[] opened_files_paths;
+}
+
+//Функция для открытия второго редактора
+inline void CentralWidget::open_second_editor(){
+    if (!tab_list->isEmpty() && opnum1 == 0 && opnum2 == 1){
+        second_editor->setVisible(true);
+    } else {
+        second_editor->setVisible(false);
+    }
 }
 
 //Слот для получения файла с пользовательским путём (создаёт экземпляр виджета для редактирования матрицы и добавляет в список)
@@ -38,6 +53,7 @@ void CentralWidget::matrix_from_file_to_dlg(){
             tab->addTab(tab_list->last(), *(tab_list->last()->file_name));
             tab_list->last()->matrix_file->close();
             delete data;
+            open_second_editor();
         }
     }
     else{
@@ -54,6 +70,7 @@ void CentralWidget::new_matrix_file_edit(){
     *tab_list->last()->file_name = "matrix_"+QString::number(QRandomGenerator::global()->generate());
     opened_files_paths->append("*");
     tab->addTab(tab_list->last(), *(tab_list->last()->file_name));
+    open_second_editor();
     /*qDebug() << "tab_list" << tab_list->size();
     qDebug() << "opened_files_paths" << opened_files_paths->size();*/
 }
@@ -109,6 +126,9 @@ void CentralWidget::tab_close(int num){
     delete tab_list->at(num);
     tab_list->removeAt(num);
     opened_files_paths->removeAt(num);
+    if (tab_list->isEmpty()){
+        second_editor->hide();
+    }
     /*qDebug() << num;
     qDebug() << "delete 1 object from tab_list" << tab_list->size();
     qDebug() << "delete 1 object from opened_files_paths" << opened_files_paths->size();*/
@@ -119,24 +139,35 @@ void CentralWidget::calculation_resiver(int i){
 }
 
 void CentralWidget::start(){
+    QString* ans = new QString();
     if (opnum1 == 0 && !this->tab_list->empty()){
-        calc->matrix_pars(this->tab_list->at(tab_counter)->document());
+        matrix1 = (calc->matrix_pars(this->tab_list->at(tab_counter)->document()));
         if (opnum2 == 0){
-            QString det("Determinant: ");
-            if (std::pair<int, double> i = calc->GetDet(this->calc->matrix); i.first == 1){
+            *ans += "Determinant: ";
+            if (std::pair<bool, double> i = calc->GetDet(matrix1); i.first == true){
                 if (i.second < 1*exp(-10)){
                     i.second = abs(i.second);
                 }
-                det += std::to_string(i.second);
-                answer->setText(det);
+                (*ans) += std::to_string(i.second);
+                answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                det = "Error, please set matrix, where rows = cols";
-                answer->setText(det);
+                (*ans) = "Error, please set matrix, where rows = cols";
+                answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
         } else if (opnum2 == 1){
-            vlayout->addWidget(new MatrixEditor);
+            matrix2 = (calc->matrix_pars(second_editor->document()));
+            if (std::pair<bool, Eigen::MatrixXd*> i = calc->fold(matrix1, matrix2); i.first == true){
+                result = (i.second);
+                calc->show(ans, result);
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            } else {
+                *ans = "size of matrix 1 != size of matrix 2";
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            }
         }
     }
     else if (opnum1 == 1 && !this->tab_list->empty()){
@@ -144,6 +175,7 @@ void CentralWidget::start(){
             qDebug() << "this op empty";
         }
     }
+    delete ans;
 }
 
 void CentralWidget::input_num_get(int i){
@@ -153,5 +185,6 @@ void CentralWidget::input_num_get(int i){
 
 void CentralWidget::get_op_num(int i){
     opnum2 = i;
+    open_second_editor();
     qDebug() << "operation1: " << opnum2;
 }

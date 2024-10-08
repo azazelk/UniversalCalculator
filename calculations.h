@@ -1,6 +1,5 @@
 #pragma once
 #include <window.h>
-#include <Eigen/Dense>
 
 class Calculations{
     friend class CentralWidget;
@@ -10,14 +9,13 @@ public:
     void getComboIndex(int);
     void getMatrixData(QTextDocument*);
     void del_spaces(QString::iterator first, QString::iterator last, QString* txt);
-    Eigen::MatrixXd matrix_pars(QTextDocument*);
-    Eigen::MatrixXd* matrix;
-    std::pair<int, double> GetDet(Eigen::MatrixXd*);
+    Eigen::MatrixXd* matrix_pars(QTextDocument*);
+    std::pair<bool, double> GetDet(Eigen::MatrixXd*);
+    std::pair<bool, Eigen::MatrixXd*> fold(Eigen::MatrixXd*, Eigen::MatrixXd*);
+    void show(QString*, Eigen::MatrixXd*);
 private:
     int* combo_index;
     int* tab_index;
-    int* rows;
-    int* cols;
 };
 
 void matrixDebug(qreal*, int&, int&);

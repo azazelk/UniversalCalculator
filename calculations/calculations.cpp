@@ -23,7 +23,7 @@ void Calculations::del_spaces(QString::iterator begin, QString::iterator end, QS
             txt->erase(begin);
             begin--;
         }
-        if (*(end-1) == ' '){
+        if (*(end-1) == ' ' || *(end-1) == '\n'){
             txt->erase(end-1);
             end--;
         }
@@ -31,7 +31,8 @@ void Calculations::del_spaces(QString::iterator begin, QString::iterator end, QS
     }
 }
 
-Eigen::MatrixXd Calculations::matrix_pars(QTextDocument* doc){
+//функция для парсинга если пользователь совершает действие с матрицей
+Eigen::MatrixXd* Calculations::matrix_pars(QTextDocument* doc){
     QString* buffer = new QString(doc->toPlainText());
     //Узнаём колличество строк
     del_spaces(buffer->begin(), buffer->end(), buffer);
@@ -51,7 +52,7 @@ Eigen::MatrixXd Calculations::matrix_pars(QTextDocument* doc){
     (*elements)++;
     //Собираем элементы в матрицу
     int* cols = new int(*elements/(*rows));
-    this->matrix = new Eigen::MatrixXd(*rows, *cols);
+    Eigen::MatrixXd* matrix = new Eigen::MatrixXd(*rows, *cols);
     QString* bufstr = new QString("");
     int* col_counter = new int(0);
     int* row_counter = new int(0);
@@ -73,17 +74,33 @@ Eigen::MatrixXd Calculations::matrix_pars(QTextDocument* doc){
     delete bufstr;
     delete col_counter;
     delete elements;
-    this->cols = new int(*cols);
-    this->rows = new int(*rows);
-    return *matrix;
+    return matrix;
 }
 
-//функция парсинга если пользователь совершает действие с матрицей
-
-std::pair<int, double> Calculations::GetDet(Eigen::MatrixXd* matrix){
-    if ((*cols)==(*rows)){
+std::pair<bool, double> Calculations::GetDet(Eigen::MatrixXd* matrix){
+    if (matrix->rows() == matrix->cols()){
         return {1, matrix->determinant()};
     } else {
         return {0, 0};
+    }
+}
+
+std::pair<bool, Eigen::MatrixXd*> Calculations::fold(Eigen::MatrixXd*m1, Eigen::MatrixXd*m2){
+    Eigen::MatrixXd* result;
+    if ((m1->rows() != 0 && m2->rows() != 0) && (m1->rows() == m2->rows() && m1->cols() == m2->cols())){
+        result = new Eigen::MatrixXd(*m1 + *m2);
+        return {1, result};
+    } else {
+        return {0, result};
+    }
+}
+
+void Calculations::show(QString*s, Eigen::MatrixXd*m){
+    for (int i = 0; i < m->rows(); i++){
+        for (int j = 0; j < m->cols(); j++){
+            *s += std::to_string((*m)(i,j));
+            *s += " ";
+        }
+        *s += '\n';
     }
 }
