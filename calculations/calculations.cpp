@@ -85,7 +85,7 @@ std::pair<bool, double> Calculations::GetDet(Eigen::MatrixXd* matrix){
     }
 }
 
-std::pair<bool, Eigen::MatrixXd*> Calculations::fold(Eigen::MatrixXd*m1, Eigen::MatrixXd*m2){
+std::pair<bool, Eigen::MatrixXd*> Calculations::fold(Eigen::MatrixXd* m1, Eigen::MatrixXd* m2){
     Eigen::MatrixXd* result;
     if ((m1->rows() != 0 && m2->rows() != 0) && (m1->rows() == m2->rows() && m1->cols() == m2->cols())){
         result = new Eigen::MatrixXd(*m1 + *m2);
@@ -95,12 +95,24 @@ std::pair<bool, Eigen::MatrixXd*> Calculations::fold(Eigen::MatrixXd*m1, Eigen::
     }
 }
 
-void Calculations::show(QString*s, Eigen::MatrixXd*m){
+void Calculations::show(QString* s, Eigen::MatrixXd* m){
     for (int i = 0; i < m->rows(); i++){
         for (int j = 0; j < m->cols(); j++){
-            *s += std::to_string((*m)(i,j));
+            QString* edited = show_edit(new double((*m)(i,j)));
+            *s += *edited;
+            delete edited;
             *s += " ";
         }
         *s += '\n';
+    }
+}
+
+std::pair<bool, Eigen::MatrixXd*> Calculations::subtraction(Eigen::MatrixXd* m1, Eigen::MatrixXd* m2){
+    Eigen::MatrixXd* result;
+    if ((m1->rows() != 0 && m2->rows() != 0) && (m1->rows() == m2->rows() && m1->cols() == m2->cols())){
+        result = new Eigen::MatrixXd(*m1 - *m2);
+        return {1, result};
+    } else {
+        return {0, result};
     }
 }

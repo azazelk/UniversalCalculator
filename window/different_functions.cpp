@@ -1,4 +1,5 @@
 #include "window.h"
+#include <regex>
 
 //Функция для получения имени файла без пути (используется для именования вкладок)
 QString* matrix_name_getter(QString& path){
@@ -12,6 +13,21 @@ QString* matrix_name_getter(QString& path){
         }
     }
     return name;
+}
+
+//функция для редактирования вывода
+QString* show_edit(double* ed){
+    QString* a = new QString;
+    *a += std::to_string(*ed);
+    auto i = a->end()-1;
+    while (*i == '0' && (*i)!= '.'){
+        a->erase(i);
+        i--;
+    }
+    if (*i == '.'){
+        a->erase(i);
+    }
+    return a;
 }
 
 //функция для отладки буффера матрицы

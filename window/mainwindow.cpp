@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     calculate_select = new FlexibleBox;
     calculate_select->insertItem(0, "Вычислить детерминант");
     calculate_select->insertItem(1, "Сложить");
+    calculate_select->insertItem(2, "Вычесть");
     input_select = new QComboBox;
     input_select->insertItem(0, "Матрица");
     input_select->insertItem(1, "Уравнение");

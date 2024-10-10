@@ -28,7 +28,7 @@ CentralWidget::~CentralWidget(){
 
 //Функция для открытия второго редактора
 inline void CentralWidget::open_second_editor(){
-    if (!tab_list->isEmpty() && opnum1 == 0 && opnum2 == 1){
+    if (!tab_list->isEmpty() && ((opnum1 == 0 && opnum2 == 1) || (opnum1 == 0 && opnum2 == 2))){
         second_editor->setVisible(true);
     } else {
         second_editor->setVisible(false);
@@ -168,6 +168,19 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
+        } else if (opnum2 == 2){
+            matrix2 = (calc->matrix_pars(second_editor->document()));
+            if (std::pair<bool, Eigen::MatrixXd*> i = calc->subtraction(matrix1, matrix2); i.first == true){
+                result = (i.second);
+                calc->show(ans, result);
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            } else {
+                *ans = "size of matrix 1 != size of matrix 2";
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            }
+
         }
     }
     else if (opnum1 == 1 && !this->tab_list->empty()){

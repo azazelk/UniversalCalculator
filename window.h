@@ -11,6 +11,7 @@ class MatrixEditor; //Класс редактора матриц
 class Calculations;
 class FlexibleBox;
 QString* matrix_name_getter(QString&); //Функция принимает путь к файлу и обрезает дирректории так, что остаётстя только имя файла без расширения
+QString* show_edit(double* ed);
 
 class MainWindow: public QMainWindow{
     friend class CentralWidget;
