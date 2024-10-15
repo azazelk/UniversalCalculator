@@ -28,7 +28,8 @@ CentralWidget::~CentralWidget(){
 
 //Функция для открытия второго редактора
 inline void CentralWidget::open_second_editor(){
-    if (!tab_list->isEmpty() && ((opnum1 == 0 && opnum2 == 1) || (opnum1 == 0 && opnum2 == 2))){
+    if (!tab_list->isEmpty() && ((opnum1 == 0 && opnum2 == 1) || (opnum1 == 0 && opnum2 == 2)
+        || (opnum1 == 0 && opnum2 == 3))){
         second_editor->setVisible(true);
     } else {
         second_editor->setVisible(false);
@@ -60,8 +61,6 @@ void CentralWidget::matrix_from_file_to_dlg(){
         qDebug() << "file is opened";
         tab_list->removeLast();
     }
-    /*qDebug() << "tab_list" << tab_list->size();
-    qDebug() << "opened_files_paths" << opened_files_paths->size();*/
 }
 
 //Слот для создания нового файла (создаёт экземпляр виджета для редактирования матрицы и добавляет в список)
@@ -71,8 +70,6 @@ void CentralWidget::new_matrix_file_edit(){
     opened_files_paths->append("*");
     tab->addTab(tab_list->last(), *(tab_list->last()->file_name));
     open_second_editor();
-    /*qDebug() << "tab_list" << tab_list->size();
-    qDebug() << "opened_files_paths" << opened_files_paths->size();*/
 }
 
 /*Слот для передачи сигнала "сохранить" открытому в данный момент файлу с матрицей (добавляет в список путей значение которое вернёт функция
@@ -88,9 +85,6 @@ void CentralWidget::matrix_save_reciver(){
             tab_list->at(tab_counter)->matrix_save();
         }
     }
-    /*qDebug() << "tab_counter" << tab_counter;
-    qDebug() << "tab_list" << tab_list->size();
-    qDebug() << "opened_files_paths" << opened_files_paths->size();*/
 }
 
 //Слот для передачи сигнала "сохранить как..." открытому в данный момент файлу с матрицей
@@ -110,9 +104,6 @@ void CentralWidget::matrix_save_as_reciver(){
         opened_files_paths->replace(tab_counter, *tab_list->at(tab_counter)->path);
         delete names;
     }
-    /*qDebug() << "tab_counter" << tab_counter;
-    qDebug() << "tab_list" << tab_list->size();
-    qDebug() << "opened_files_paths" << opened_files_paths->size();*/
 }
 
 //Слот для получения номера вкладки из объекта tab класса QTabWidget
@@ -129,9 +120,6 @@ void CentralWidget::tab_close(int num){
     if (tab_list->isEmpty()){
         second_editor->hide();
     }
-    /*qDebug() << num;
-    qDebug() << "delete 1 object from tab_list" << tab_list->size();
-    qDebug() << "delete 1 object from opened_files_paths" << opened_files_paths->size();*/
 }
 
 void CentralWidget::calculation_resiver(int i){
@@ -152,7 +140,7 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                (*ans) = "Error, please set matrix, where rows = cols";
+                (*ans) = "Невозможно вычислить определитель";
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -164,7 +152,7 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                *ans = "size of matrix 1 != size of matrix 2";
+                *ans = "Неверные данные: размеры матриц должны быть равны";
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -176,16 +164,22 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                *ans = "size of matrix 1 != size of matrix 2";
+                *ans = "Неверные данные: размеры матриц должны быть равны";
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
-
-        }
-    }
-    else if (opnum1 == 1 && !this->tab_list->empty()){
-        if (opnum2 == 0){
-            qDebug() << "this op empty";
+        } else if (opnum2 == 3){
+            matrix2 = (calc->matrix_pars(second_editor->document()));
+            if (std::pair<bool, Eigen::MatrixXd*> i = calc->multiplication(matrix1, matrix2); i.first == true){
+                result = (i.second);
+                calc->show(ans, result);
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            } else {
+                *ans = "Неверные данные: колличество столбцов первого сомножителя долны быть равны колличеству строк второго сомножителя";
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            }
         }
     }
     delete ans;

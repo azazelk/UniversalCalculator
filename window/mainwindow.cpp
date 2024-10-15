@@ -28,9 +28,9 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     calculate_select->insertItem(0, "Вычислить детерминант");
     calculate_select->insertItem(1, "Сложить");
     calculate_select->insertItem(2, "Вычесть");
+    calculate_select->insertItem(3, "Умножить");
     input_select = new QComboBox;
     input_select->insertItem(0, "Матрица");
-    input_select->insertItem(1, "Уравнение");
     status_bar->insertWidget(0, input_select, 1);
     status_bar->insertWidget(1, calculate_select, 2);
     status_bar->insertWidget(2, start_button, 0);

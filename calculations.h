@@ -13,6 +13,7 @@ public:
     std::pair<bool, double> GetDet(Eigen::MatrixXd*);
     std::pair<bool, Eigen::MatrixXd*> fold(Eigen::MatrixXd*, Eigen::MatrixXd*);
     std::pair<bool, Eigen::MatrixXd*> subtraction(Eigen::MatrixXd*, Eigen::MatrixXd*);
+    std::pair<bool, Eigen::MatrixXd*> multiplication(Eigen::MatrixXd*, Eigen::MatrixXd*);
     void show(QString*, Eigen::MatrixXd*);
 private:
     int* combo_index;

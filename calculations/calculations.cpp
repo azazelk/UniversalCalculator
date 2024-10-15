@@ -116,3 +116,14 @@ std::pair<bool, Eigen::MatrixXd*> Calculations::subtraction(Eigen::MatrixXd* m1,
         return {0, result};
     }
 }
+
+std::pair<bool, Eigen::MatrixXd*> Calculations::multiplication(Eigen::MatrixXd* m1, Eigen::MatrixXd* m2){
+    Eigen::MatrixXd* result;
+    if (m1->cols() == m2->rows() || m1->rows() == m2->cols()){
+        result = new Eigen::MatrixXd(*m1 * *m2);
+        return {1, result};
+    } else {
+        return {0, result};
+    }
+}
+
