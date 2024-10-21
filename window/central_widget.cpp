@@ -5,17 +5,24 @@ CentralWidget::CentralWidget(QWidget* parrent): QWidget(parrent){
     tab_counter = 0;
     tab = new QTabWidget(this);
     tab->setTabsClosable(true);
-    hlayout = new QHBoxLayout(this);
+    hlayout = new QHBoxLayout;
     second_editor = new MatrixEditor;
     second_editor->setVisible(false);
+    vlayout = new QVBoxLayout;
     hlayout->addWidget(tab);
-    hlayout->addWidget(second_editor);
+    second_editor->setLineWidth(1);
+    second_editor->setMidLineWidth(1);
+    second_editor->setFrameShadow(QFrame::Sunken);
+    second_editor->setFrameShape(QFrame::Panel);
+    vlayout->addWidget(second_editor);
+    hlayout->addLayout(vlayout);
+    this->setLayout(hlayout);
     tab_list = new QList<MatrixEditor*>;
     opened_files_paths = new QList<QString>;
-    this->setLayout(hlayout);
     calc = new Calculations;
     answer_doc = new QDockWidget;
     answer = new QLabel;
+    answer_doc->setWidget(answer);
     matrix1 = new Eigen::MatrixXd;
     matrix2 = new Eigen::MatrixXd;
     result = new Eigen::MatrixXd;
@@ -24,6 +31,18 @@ CentralWidget::CentralWidget(QWidget* parrent): QWidget(parrent){
 //Деструктор центрального виджета
 CentralWidget::~CentralWidget(){
     delete[] opened_files_paths;
+    delete[] tab_list;
+    delete second_editor;
+    delete tab;
+    delete hlayout;
+    delete vlayout;
+    delete answers;
+    delete calc;
+    delete answer_doc;
+    delete answer;
+    delete matrix1;
+    delete matrix2;
+    delete result;
 }
 
 //Функция для открытия второго редактора
@@ -40,12 +59,11 @@ inline void CentralWidget::open_second_editor(){
 void CentralWidget::matrix_from_file_to_dlg(){
     tab_counter = 0;
     tab_list->append(new MatrixEditor(this));
-    *tab_list->last()->path = QFileDialog::getOpenFileName(this, "Выберите файл с матрицей", "", "*.txt");
+    *tab_list->last()->path = QFileDialog::getOpenFileName(this, tr("Выберите файл с матрицей"), "", "*.txt");
     if (!tab_list->last()->path->isNull() && !opened_files_paths->contains(*tab_list->last()->path)){
         *tab_list->last()->file_name = *(matrix_name_getter(*tab_list->last()->path));
         tab_list->last()->matrix_file = new QFile(*tab_list->last()->path, this);
         if (!tab_list->last()->matrix_file->open(QIODevice::ReadOnly)){
-            qDebug() << "file open Error";
             tab_list->removeLast();
         } else {
             opened_files_paths->append(*tab_list->last()->path);
@@ -58,7 +76,6 @@ void CentralWidget::matrix_from_file_to_dlg(){
         }
     }
     else{
-        qDebug() << "file is opened";
         tab_list->removeLast();
     }
 }
@@ -114,7 +131,6 @@ void CentralWidget::tab_num_get(int num){
 //Слот для получения номера вкладки из объекта tab класса QTabWidget и её закрытия
 void CentralWidget::tab_close(int num){
     tab->removeTab(num);
-    delete tab_list->at(num);
     tab_list->removeAt(num);
     opened_files_paths->removeAt(num);
     if (tab_list->isEmpty()){
@@ -131,7 +147,7 @@ void CentralWidget::start(){
     if (opnum1 == 0 && !this->tab_list->empty()){
         matrix1 = (calc->matrix_pars(this->tab_list->at(tab_counter)->document()));
         if (opnum2 == 0){
-            *ans += "Determinant: ";
+            *ans += tr("Детерминант: ");
             if (std::pair<bool, double> i = calc->GetDet(matrix1); i.first == true){
                 if (i.second < 1*exp(-10)){
                     i.second = abs(i.second);
@@ -140,7 +156,7 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                (*ans) = "Невозможно вычислить определитель";
+                (*ans) = tr("Невозможно вычислить определитель");
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -152,7 +168,7 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                *ans = "Неверные данные: размеры матриц должны быть равны";
+                *ans = tr("Неверные данные: размеры матриц должны быть равны");
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -164,7 +180,7 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                *ans = "Неверные данные: размеры матриц должны быть равны";
+                *ans = tr("Неверные данные: размеры матриц должны быть равны");
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -176,7 +192,33 @@ void CentralWidget::start(){
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             } else {
-                *ans = "Неверные данные: колличество столбцов первого сомножителя долны быть равны колличеству строк второго сомножителя";
+                *ans = tr("Неверные данные: колличество столбцов первого сомножителя долны быть равны колличеству строк второго сомножителя");
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            }
+        }
+    } else if (opnum1 == 1 && !this->tab_list->empty()){
+        if (opnum2 == 0){
+            matrix1 = (calc->matrix_pars(this->tab_list->at(tab_counter)->document()));
+            size_t size = matrix1->rows();
+            if (matrix1->rows() == matrix1->cols()){
+                calc->show(ans, calc->mst_kruskal(calc->get_struct(matrix1, size), size));
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            } else {
+                *ans = tr("Неверные данный: матрица смежности некорректна");
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            }
+        } else if (opnum2 == 1){
+            matrix1 = (calc->matrix_pars(this->tab_list->at(tab_counter)->document()));
+            size_t size = matrix1->rows();
+            if (matrix1->rows() == matrix1->cols()){
+                calc->show(ans, calc->mst_prim(matrix1, size));
+                answer->setText(*ans);
+                answer_doc->setWidget(answer);
+            } else {
+                *ans = tr("Неверные данный: матрица смежности некорректна");
                 answer->setText(*ans);
                 answer_doc->setWidget(answer);
             }
@@ -187,11 +229,10 @@ void CentralWidget::start(){
 
 void CentralWidget::input_num_get(int i){
     opnum1 = i;
-    qDebug() << "operation1: " << opnum1;
+    second_editor->setVisible(false);
 }
 
 void CentralWidget::get_op_num(int i){
     opnum2 = i;
     open_second_editor();
-    qDebug() << "operation1: " << opnum2;
 }

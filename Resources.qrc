@@ -3,4 +3,7 @@
         <file>icons/play.png</file>
         <file>icons/main_logo.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>style.css</file>
+    </qresource>
 </RCC>

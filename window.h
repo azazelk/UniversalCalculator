@@ -4,19 +4,23 @@
 #include <QApplication>
 #include "QtWidgets"
 #include "calculations.h"
+#include <set>
+#include <algorithm>
 
 class MainWindow; //Класс главного окна
 class CentralWidget; //Класс центрального окна
 class MatrixEditor; //Класс редактора матриц
-class Calculations;
-class FlexibleBox;
+class Calculations; //Класс вычислений
+class FlexibleBox; //Класс для выбора входных данных
 QString* matrix_name_getter(QString&); //Функция принимает путь к файлу и обрезает дирректории так, что остаётстя только имя файла без расширения
 QString* show_edit(double* ed);
 
 class MainWindow: public QMainWindow{
+    Q_OBJECT
     friend class CentralWidget;
 public:
     MainWindow(QWidget* parrent = 0);
+    ~MainWindow();
 private:
     FlexibleBox* calculate_select;
     QMenuBar* menubar;
@@ -57,6 +61,8 @@ private:
     MatrixEditor* second_editor;
     QTabWidget* tab;
     QHBoxLayout* hlayout;
+    QVBoxLayout* vlayout;
+    QPlainTextEdit* answers;
     QList<QString>* opened_files_paths; //хранит в себе все пути открытых файлов
     Calculations* calc;
     QDockWidget* answer_doc;

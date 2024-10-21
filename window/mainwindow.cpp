@@ -5,12 +5,12 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     //####################################### Меню и центральный виджет #######################################
     menubar = new QMenuBar;
     this->setMenuWidget(menubar);
-    file_menu = new QMenu("Файл", menubar);
+    file_menu = new QMenu(tr("Файл"), menubar);
     menubar->addMenu(file_menu);
-    file_open_action = new QAction("Открыть файл", menubar);
-    save = new QAction("Сохранить", menubar);
-    save_as = new QAction("Сохранить как...", menubar);
-    file_new = new QAction("Новый", menubar);
+    file_open_action = new QAction(tr("Открыть файл"), menubar);
+    save = new QAction(tr("Сохранить"), menubar);
+    save_as = new QAction(tr("Сохранить как..."), menubar);
+    file_new = new QAction(tr("Новый"), menubar);
     file_menu->addAction(file_new);
     file_menu->addAction(file_open_action);
     file_menu->addAction(save);
@@ -25,19 +25,20 @@ MainWindow::MainWindow(QWidget* parrent): QMainWindow(parrent){
     start_button->setMinimumSize(35, 32);
     start_button->setIconSize(QSize(25, 25));
     calculate_select = new FlexibleBox;
-    calculate_select->insertItem(0, "Вычислить детерминант");
-    calculate_select->insertItem(1, "Сложить");
-    calculate_select->insertItem(2, "Вычесть");
-    calculate_select->insertItem(3, "Умножить");
+    calculate_select->insertItem(0, tr("Вычислить детерминант"));
+    calculate_select->insertItem(1, tr("Сложить"));
+    calculate_select->insertItem(2, tr("Вычесть"));
+    calculate_select->insertItem(3, tr("Умножить"));
     input_select = new QComboBox;
-    input_select->insertItem(0, "Матрица");
+    input_select->insertItem(0, tr("Матрица"));
+    input_select->insertItem(1, tr("Граф"));
     status_bar->insertWidget(0, input_select, 1);
     status_bar->insertWidget(1, calculate_select, 2);
     status_bar->insertWidget(2, start_button, 0);
     this->setStatusBar(status_bar);
 
     //####################################### Консоль с ответом ##################################
-    mainCentralWgt->answer_doc = new QDockWidget("Answer console");
+    mainCentralWgt->answer_doc = new QDockWidget(tr("Поле ответов"));
     mainCentralWgt->answer_doc->setFeatures(QDockWidget::NoDockWidgetFeatures);
     this->addDockWidget(Qt::BottomDockWidgetArea, mainCentralWgt->answer_doc);
 
@@ -75,16 +76,33 @@ void FlexibleBox::create_action(int i){
     switch (i) {
     case 0:
         this->clear();
-        this->addItems(QList<QString>("Вычислить детеримнант"));
-        this->addItems(QList<QString>("Сложить"));
+        this->addItems(QList<QString>(tr("Вычислить детеримнант")));
+        this->addItems(QList<QString>(tr("Сложить")));
+        this->addItems(QList<QString>(tr("Вычесть")));
+        this->addItems(QList<QString>(tr("умножить")));
         emit drop_input(i);
         break;
     case 1:
         this->clear();
-        this->addItems(QList<QString>("Найти корни"));
+        this->addItems(QList<QString>(tr("MST алгоритм Краскала")));
+        this->addItems(QList<QString>(tr("MST алгоритм Прима")));
         emit drop_input(i);
         break;
     default:
         break;
     }
+}
+
+MainWindow::~MainWindow(){
+    delete calculate_select;
+    delete menubar;
+    delete file_menu;
+    delete file_open_action;
+    delete save;
+    delete save_as;
+    delete file_new;
+    delete mainCentralWgt;
+    delete status_bar;
+    delete start_button;
+    delete input_select;
 }

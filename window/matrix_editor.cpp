@@ -10,6 +10,7 @@ MatrixEditor::MatrixEditor(QWidget* parrent): QPlainTextEdit(parrent){
 MatrixEditor::~MatrixEditor(){
     delete file_name;
     delete path;
+    delete matrix_file;
 }
 
 //Слот для сохранения файла
@@ -22,7 +23,7 @@ QString MatrixEditor::matrix_save(){
     }
     matrix_file = new QFile(*path, this);
     if (!matrix_file->open(QIODevice::WriteOnly | QIODevice::Text)){
-        qDebug() << "file open Error";
+
     } else {
         QTextStream data(matrix_file);
         data << this->toPlainText();
@@ -35,7 +36,7 @@ QString MatrixEditor::matrix_save(){
 
 //Слот для сохранения файла с пользовательсим путём
 QString MatrixEditor::matrix_save_as(){
-    *path = QFileDialog::getSaveFileName(this, "Выберите путь для сохранения", *file_name, "*.txt");
+    *path = QFileDialog::getSaveFileName(this, tr("Выберите путь для сохранения"), *file_name, "*.txt");
     matrix_file = new QFile(*path, this);
     if (!matrix_file->open(QIODevice::WriteOnly | QIODevice::Text)){
         qDebug() << "file open Error";
